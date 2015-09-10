@@ -15,7 +15,7 @@ tcp {
 ```
 
 ```
-user onframework;
+user titilink;
 worker_processes 4;
 events {
     use epoll;
@@ -34,22 +34,22 @@ http {
 	
     ## console lb
     upstream nlbserver {
-        server 10.180.45.227:8086;
-        server 10.180.137.221:8086;
+        server 192.168.1.1:8080;
+        server 192.168.1.2:8080;
 
         check interval=10000 rise=1 fall=3 timeout=3000;
     }
 	
     server {
-        listen 443;
-        server_name 10.180.45.227;
+        listen 192.168.1.3:443;
+        server_name 192.168.1.3;
         ssl on;
 	ssl_session_timeout 5m;
 	ssl_protocols TLSv1.1 TLSv1.2;
         ssl_ciphers "AES128-SHA:AES256-SHA:AES128-SHA256:AES256-SHA256:HIGH:!MEDIUM:!LOW:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4:@STRENGTH";
 
-        ssl_certificate /opt/onframework/nginx/conf/SSL/server.crt;
-        ssl_certificate_key /opt/onframework/nginx/conf/SSL/server.key;
+        ssl_certificate /opt/titlink/nginx/conf/SSL/server.crt;
+        ssl_certificate_key /opt/titlink/nginx/conf/SSL/server.key;
 		
 	ssl_prefer_server_ciphers on;
         ssl_session_cache shared:SSL:10m;
@@ -65,7 +65,7 @@ http {
         add_header X-XSS-Protection "1; mode=block;";
 
         ##console   portal
-        location /silvan/rest/v1.0 {
+        location /titlink/rest/v1.0 {
             proxy_pass https://nlbserver;
             proxy_redirect off;
         }
