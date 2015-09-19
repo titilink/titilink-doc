@@ -1,6 +1,6 @@
 - SSL flow
 ```
-客户端香服务端索取公钥并验证公钥
+客户端向服务端索取公钥并验证公钥
 服务端和客户端协商生成会话key
 服务端可客户端使用会话key加密通信数据
 ```
@@ -18,20 +18,33 @@ server-------(采用session key加密数据)------------------->client
 
 - SSL认证
 
-生成证书
+生成服务端证书
 ```
-keytool -genkey -alias tomcat -keyalg RSA -validity 365 -keystore tomcat.keystore -keypass Tomcat@123 -storepass Tomcat@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
+keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keystore keystore.jks -keypass pass@123 -storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
+```
+导出服务端证书
+```
+keytool -export -alias serverkey -keystore keystore.jks -file server.cer -storepass pass@123
+```
+导入客户端证书
+```
+keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks -keypass pass@123 -storepass pass@123
 ```
 
-导出证书
+生成客户端证书
 ```
-keytool -export -alias tomcat -keystore tomcat.keystore -file tomcat.cer -storepass Tomcat@123
+keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore keystore.jks -keypass changeit -storepass changeit 
+-dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
+```
+导出客户端证书
+```
+keytool -export -alias clientkey -keystore keystore.jks -file client.cer -storepass changeit
+```
+导入服务端证书
+```
+keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
 ```
 
-导入证书
-```
-keytool -import -alias tomcat -file tomcat.cer -keystore tomcat.truststore -storepass Tomcat@123
-```
 
 使用证书
 ```
