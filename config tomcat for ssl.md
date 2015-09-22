@@ -1,4 +1,4 @@
-- SSL flow
+- 一、SSL flow
 ```
 客户端向服务端索取公钥并验证公钥
 服务端和客户端协商生成会话key
@@ -16,19 +16,29 @@ client-------(采用session key加密数据)------------------->server
 server-------(采用session key加密数据)------------------->client
 ```
 
-- SSL认证
+- 二、SSL认证
+
+#### java应用
 
 生成服务端证书
 ```
-keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keystore keystore.jks -keypass pass@123 -storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
+keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore keystore.jks -keypass pass@123 
+-storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
+# 如果不用签名直接作为服务端证书，到此就ok了
 ```
+
 导出服务端证书
 ```
 keytool -export -alias serverkey -keystore keystore.jks -file server.cer -storepass pass@123
 ```
-导入客户端证书
+导出待签名证书
 ```
-keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks -keypass pass@123 -storepass pass@123
+keytool -certreq -alias titilink_server -sigalg SHA256withRSA -file titilink_server.csr -keystore server.keystore
+```
+导入客户端CA证书
+```
+keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks 
+-keypass pass@123 -storepass pass@123
 ```
 
 生成客户端证书
@@ -45,12 +55,18 @@ keytool -export -alias clientkey -keystore keystore.jks -file client.cer -storep
 keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
 ```
 
-
 使用证书
 ```
 java -Djavax.net.ssl.keyStore=tomcat.keystore -Djavax.net.ssl.keyStorePassword=Tomcat@123 Server
 java -Djavax.net.ssl.trustStore=tomcat.truststore -Djavax.net.ssl.trustStorePassword=Tomcat@123 Client
 ```
+
+#### 非java应用：nginx、nodejs
+生成服务端证书
+```
+openssl genrsa -aes256 -out server.key 2048
+```
+
 
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1616" 
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=true" 
