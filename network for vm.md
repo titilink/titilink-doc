@@ -1,3 +1,5 @@
+http://www.douban.com/group/topic/15558388/
+
 VirtualBox虚拟机网络设置（四种方式）
 
 来自:  2010-11-10 23:30:11
