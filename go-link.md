@@ -8,3 +8,10 @@ dagent.exe -oss-type="go_oss" -url="http://10.1.13.57:7070/containers/containerN
 
 
 openssl req -x509  -batch -nodes -newkey rsa:2048 -keyout lumberjack.key -out lumberjack.crt -subj /CN=logstash.hae
+
+
+https://www.nginx.com/blog/introduction-to-microservices/
+https://www.nginx.com/blog/building-microservices-using-an-api-gateway/
+https://www.nginx.com/blog/building-microservices-inter-process-communication/
+https://www.nginx.com/blog/service-discovery-in-a-microservices-architecture/
+https://www.nginx.com/blog/event-driven-data-management-microservices/
