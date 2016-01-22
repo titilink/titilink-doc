@@ -20,41 +20,38 @@ server-------(采用session key加密数据)------------------->client
 
 #### java应用
 
-生成服务端私钥文件keystore
+- 生成服务端私钥文件keystore
 ```
 keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore serverkey.jks -keypass pass@123 
 -storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 # 如果不用签名直接作为服务端证书，到此就ok了
 ```
 
-根据服务端私钥文件，导出服务端安全证书truststore
+- 根据服务端私钥文件，导出服务端安全证书truststore
 ```
 keytool -export -alias serverkey -keystore serverkey.jks -file serverkey.crt -storepass pass@123
 ```
 
-生成客户端私钥文件keystore
+- 生成客户端私钥文件keystore
 ```
 keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore clientkey.jks -keypass changeit -storepass changeit 
 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 ```
 
-导出客户端安全证书truststore
+- 导出客户端安全证书truststore
 ```
 keytool -export -alias clientkey -keystore clientkey.jks -file clientkey.crt -storepass changeit
 ```
 
-服务端私钥导入客户端的安全证书
+- 服务端私钥导入客户端的安全证书truststore
 ```
 keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore serverkey.jks -keypass pass@123 -storepass pass@123
 ```
 
-客户端私钥导入服务端的安全证书
+- 客户端私钥导入服务端的安全证书truststore
 ```
 keytool -import -v trustcacerts -alias serverkey -file serverkey.crt -keystore clientkey.jks -keypass pass@123 -storepass pass@123
 ```
-
-
-
 
 使用证书
 ```
