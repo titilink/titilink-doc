@@ -20,40 +20,53 @@ server-------(采用session key加密数据)------------------->client
 
 #### java应用
 
-生成服务端证书
+生成服务端私钥文件keystore
 ```
-keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore keystore.jks -keypass pass@123 
+keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore serverkey.jks -keypass pass@123 
 -storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 # 如果不用签名直接作为服务端证书，到此就ok了
 ```
 
-导出服务端证书
+根据服务端私钥文件，导出服务端安全证书truststore
 ```
-keytool -export -alias serverkey -keystore keystore.jks -file server.cer -storepass pass@123
-```
-导出待签名证书
-```
-keytool -certreq -alias titilink_server -sigalg SHA256withRSA -file titilink_server.csr -keystore server.keystore
-```
-导入客户端CA证书
-```
-keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks 
--keypass pass@123 -storepass pass@123
+keytool -export -alias serverkey -keystore serverkey.jks -file serverkey.crt -storepass pass@123
 ```
 
-生成客户端证书
+##导出待签名证书
+##```
+##keytool -certreq -alias titilink_server -sigalg SHA256withRSA -file titilink_server.csr -keystore server.keystore
+##```
+##导入客户端CA证书
+##```
+##keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks 
+##-keypass pass@123 -storepass pass@123
+##```
+
+生成客户端私钥文件keystore
 ```
-keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore keystore.jks -keypass changeit -storepass changeit 
+keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore clientkey.jks -keypass changeit -storepass changeit 
 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 ```
-导出客户端证书
+
+导出客户端安全证书truststore
 ```
-keytool -export -alias clientkey -keystore keystore.jks -file client.cer -storepass changeit
+keytool -export -alias clientkey -keystore clientkey.jks -file clientkey.crt -storepass changeit
 ```
-导入服务端证书
+
+服务端私钥导入客户端的安全证书
 ```
-keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
+keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore caret.jks -keypass pass@123 -storepass pass@123
+keytool -import -alias serverkey -file server.crt -keystore tclient.keystore 
 ```
+
+
+##导入服务端证书
+##```
+##keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
+##```
+
+
+
 
 使用证书
 ```
