@@ -2,7 +2,7 @@
 ```
 客户端向服务端索取公钥并验证公钥
 服务端和客户端协商生成会话key
-服务端可客户端使用会话key加密通信数据
+服务端和客户端使用会话key加密通信数据
 ```
 ```
 client------(加密方法、协议版本、随机数)----------------->server
@@ -32,16 +32,6 @@ keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keysto
 keytool -export -alias serverkey -keystore serverkey.jks -file serverkey.crt -storepass pass@123
 ```
 
-##导出待签名证书
-##```
-##keytool -certreq -alias titilink_server -sigalg SHA256withRSA -file titilink_server.csr -keystore server.keystore
-##```
-##导入客户端CA证书
-##```
-##keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks 
-##-keypass pass@123 -storepass pass@123
-##```
-
 生成客户端私钥文件keystore
 ```
 keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore clientkey.jks -keypass changeit -storepass changeit 
@@ -55,15 +45,13 @@ keytool -export -alias clientkey -keystore clientkey.jks -file clientkey.crt -st
 
 服务端私钥导入客户端的安全证书
 ```
-keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore caret.jks -keypass pass@123 -storepass pass@123
-keytool -import -alias serverkey -file server.crt -keystore tclient.keystore 
+keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore serverkey.jks -keypass pass@123 -storepass pass@123
 ```
 
-
-##导入服务端证书
-##```
-##keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
-##```
+客户端私钥导入服务端的安全证书
+```
+keytool -import -v trustcacerts -alias serverkey -file serverkey.crt -keystore clientkey.jks -keypass pass@123 -storepass pass@123
+```
 
 
 
