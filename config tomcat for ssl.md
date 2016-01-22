@@ -53,14 +53,14 @@ keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore s
 keytool -import -v trustcacerts -alias serverkey -file serverkey.crt -keystore clientkey.jks -keypass pass@123 -storepass pass@123
 ```
 
-使用证书
+- 使用证书
 ```
 java -Djavax.net.ssl.keyStore=tomcat.keystore -Djavax.net.ssl.keyStorePassword=Tomcat@123 Server
 java -Djavax.net.ssl.trustStore=tomcat.truststore -Djavax.net.ssl.trustStorePassword=Tomcat@123 Client
 ```
 
 #### 非java应用：nginx、nodejs
-生成服务端证书
+- 生成服务端证书
 ```
 openssl genrsa -aes256 -out server.key 2048
 ```
