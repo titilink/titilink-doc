@@ -1,3 +1,13 @@
+卸载docker
+```shell
+sudo docker -v
+sudo apt-get remove docker
+sudo apt-get remove --auto-remove docker
+sudo apt-get remove --purge lxc-docker
+sudo apt-get autoremove --purge
+```
+
+
 - 1、apt-get update
 - 2、apt-get install apt-transport-https
 - 3、apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
