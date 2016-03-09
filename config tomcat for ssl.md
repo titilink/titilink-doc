@@ -2,7 +2,7 @@
 ```
 客户端向服务端索取公钥并验证公钥
 服务端和客户端协商生成会话key
-服务端可客户端使用会话key加密通信数据
+服务端和客户端使用会话key加密通信数据
 ```
 ```
 client------(加密方法、协议版本、随机数)----------------->server
@@ -20,49 +20,47 @@ server-------(采用session key加密数据)------------------->client
 
 #### java应用
 
-生成服务端证书
+- 生成服务端私钥文件keystore
 ```
-keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore keystore.jks -keypass pass@123 
+keytool -genkey -alias serverkey -keyalg RSA -validity 365 -keysize 2048 -keystore serverkey.jks -keypass pass@123 
 -storepass pass@123 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 # 如果不用签名直接作为服务端证书，到此就ok了
 ```
 
-导出服务端证书
+- 根据服务端私钥文件，导出服务端安全证书truststore
 ```
-keytool -export -alias serverkey -keystore keystore.jks -file server.cer -storepass pass@123
-```
-导出待签名证书
-```
-keytool -certreq -alias titilink_server -sigalg SHA256withRSA -file titilink_server.csr -keystore server.keystore
-```
-导入客户端CA证书
-```
-keytool -import -v trustcacerts -alias clientkey -file client.cer -keystore caret.jks 
--keypass pass@123 -storepass pass@123
+keytool -export -alias serverkey -keystore serverkey.jks -file serverkey.crt -storepass pass@123
 ```
 
-生成客户端证书
+- 生成客户端私钥文件keystore
 ```
-keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore keystore.jks -keypass changeit -storepass changeit 
+keytool -genkey -alias clientkey -keyalg RSA -validity 365 -keystore clientkey.jks -keypass changeit -storepass changeit 
 -dname "CN=Gan Ting, OU=DevOps, O=titilink, L=Hang Zhou, ST=Zhe Jiang, C=CN"
 ```
-导出客户端证书
+
+- 导出客户端安全证书truststore
 ```
-keytool -export -alias clientkey -keystore keystore.jks -file client.cer -storepass changeit
-```
-导入服务端证书
-```
-keytool -import -v trustcacerts -alias serverkey -file server.cer -keystore caret.jks -keypass changeit -storepass changeit
+keytool -export -alias clientkey -keystore clientkey.jks -file clientkey.crt -storepass changeit
 ```
 
-使用证书
+- 服务端私钥导入客户端的安全证书truststore
+```
+keytool -import -v trustcacerts -alias clientkey -file clientkey.crt -keystore serverkey.jks -keypass pass@123 -storepass pass@123
+```
+
+- 客户端私钥导入服务端的安全证书truststore
+```
+keytool -import -v trustcacerts -alias serverkey -file serverkey.crt -keystore clientkey.jks -keypass pass@123 -storepass pass@123
+```
+
+- 使用证书
 ```
 java -Djavax.net.ssl.keyStore=tomcat.keystore -Djavax.net.ssl.keyStorePassword=Tomcat@123 Server
 java -Djavax.net.ssl.trustStore=tomcat.truststore -Djavax.net.ssl.trustStorePassword=Tomcat@123 Client
 ```
 
 #### 非java应用：nginx、nodejs
-生成服务端证书
+- 生成服务端证书
 ```
 openssl genrsa -aes256 -out server.key 2048
 ```
