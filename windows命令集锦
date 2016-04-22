@@ -1,0 +1,14 @@
+- 查看当前端口占用情况
+```
+netstat -aon | findstr "9090"
+```
+
+- 查看进程信息
+```
+tasklist | grep "1234"
+```
+
+- kill进程
+```
+taskkill /f /im prometheus.exe
+```
